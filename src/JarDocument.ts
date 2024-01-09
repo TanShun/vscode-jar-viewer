@@ -20,7 +20,7 @@ export default class JarDocument implements vscode.CustomDocument {
 
 	static async readContent(uri: vscode.Uri): Promise<string|undefined> {
 		const jarSegments = split(uri.path);
-		const jarDocument = await JarDocument.getInstance(vscode.Uri.parse(jarSegments.base));
+		const jarDocument = await JarDocument.getInstance(vscode.Uri.file(jarSegments.base));
 		return jarDocument?.readFileContent(jarSegments.path);
 	}
 
@@ -55,7 +55,7 @@ export default class JarDocument implements vscode.CustomDocument {
 	}
 
 	async readFileContent(path: string): Promise<string|undefined> {
-		const zipObject = this.zipData.file(path.substring(1)); // remove the leading '/'
+		const zipObject = this.zipData.file(path.replace(/\\/g, '/').substring(1)); // remove the leading '/'
 		return zipObject?.async('text');
 	}
 
